@@ -19,23 +19,29 @@
 //     // explicit B(const A& a) : x(a.x) { }
 // };
 
-int main() {
-	ft::vector<int> test;
-	try
-	{
-	test.reserve(10);
-	std::cout << test.capacity();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	//  std::vector<int> original;
+int main ()
+{
+  unsigned int i;
+	std::vector<int> foo;   // three ints with a value of 100
+  std::vector<int> bar;   // five ints with a value of 200
 
-	// std::cout << original.size();
-	// original.push_back(3);
-	// std::cout << original.size();
-	// original.push_back(1);
-	// original.push_back(5);
-	// std::cout << original.capacity();
+	foo.resize(10,10);
+	bar.resize(5,5);
+  foo.swap(bar);
+  foo.swap(bar);
+
+  std::cout << "foo contains:";
+  for (int i = 0 ;i < foo.size(); i++)
+    std::cout << ' ' << foo[i];
+  std::cout << '\n';
+
+  std::cout << "bar contains:";
+  for (int i = 0 ;i < bar.size(); i++)
+    std::cout << ' ' << bar[i];
+  std::cout << '\n';
+
+  return 0;
 }
+
+
+
