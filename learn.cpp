@@ -21,27 +21,26 @@
 
 int main ()
 {
-  unsigned int i;
-	std::vector<int> foo;   // three ints with a value of 100
-  std::vector<int> bar;   // five ints with a value of 200
 
-	foo.resize(10,10);
-	bar.resize(5,5);
-  foo.swap(bar);
-  foo.swap(bar);
+  ft::vector<int> myvector;
+  for (int i=1; i<=5; i++) myvector.push_back(i);
 
-  std::cout << "foo contains:";
-  for (int i = 0 ;i < foo.size(); i++)
-    std::cout << ' ' << foo[i];
-  std::cout << '\n';
+  std::cout << "myvector contains:";
+  for (ft::vector<int>::iterator_vector it = myvector.begin() ; it != myvector.end(); ++it)
+	{
+		std::cout << ' ' << *it;
+		if(it + 1 == myvector.end())
+			std::cout << ' ' << *it;
+	}
 
-  std::cout << "bar contains:";
-  for (int i = 0 ;i < bar.size(); i++)
-    std::cout << ' ' << bar[i];
   std::cout << '\n';
 
   return 0;
 }
+
+
+
+
 
 
 
