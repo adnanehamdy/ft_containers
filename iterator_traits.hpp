@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:35:52 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/01/30 15:29:10 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/02 11:32:49 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,3 @@ template<class T> struct iterator_traits<const T*> {
 	typedef const T& reference;
 	typedef std::random_access_iterator_tag iterator_category;
 };
-
-
-// namespace ft {
-// 	struct input_iterator_tag {};
-// 	struct output_iterator_tag {};
-// 	struct forward_iterator_tag: public input_iterator_tag {};
-// 	struct bidirectional_iterator_tag: public forward_iterator_tag {};
-// 	struct random_access_iterator_tag: public bidirectional_iterator_tag {};
-// }

@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 16:29:31 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/01/30 11:45:39 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/04 13:28:42 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ namespace ft {
 		typedef typename Allocator::reference reference;
 		typedef typename Allocator::const_reference const_reference;
 		typedef T value_type;
-		typedef ft::iterator_vector<value_type*> iterator;
-		typedef ft::iterator_vector<const value_type*> const_iterator;
+		typedef typename ft::vector_iterator<T*> iterator;
+		typedef typename ft::vector_iterator<const T*> const_iterator;
 		typedef std::size_t  size_type;
-		// typedef implementation defined difference_type;
+		typedef  ptrdiff_t difference_type;
 		typedef Allocator allocator_type;
 		typedef typename Allocator::pointer pointer;
 		typedef typename Allocator::const_pointer const_pointer;
@@ -54,14 +54,18 @@ namespace ft {
 	// ******** ITERATORS ************
 		iterator begin()
 		{
-			return (_array);
+			return (iterator(_array));
 		}
 		const_iterator begin() const
-		{ return (_array); }
+		{ return (const_iterator(_array)); }
 		iterator end()
-		{ return (_array + (size())); }
+		{
+			if (this->empty())
+				return (begin());
+			return (iterator(_array + size()));
+		}
 		const_iterator end() const
-		{ return (_array + (size())); }
+		{ return (const_iterator(_array + size())); }
 		// reverse_iterator rbegin();
 		// const_reverse_iterator rbegin() const;
 		// reverse_iterator rend();
@@ -127,10 +131,22 @@ namespace ft {
 				throw std::out_of_range("out of range");
 			return (this->operator[](n));
 		}
-		// reference front();
-		// const_reference front() const;
-		// reference back();
-		// const_reference back() const;
+		reference front()
+		{
+			return (*_array);
+		}
+		const_reference front() const
+		{
+			return(*_array);
+		}
+		reference back()
+		{
+			return (*_array + size() - 1);
+		}
+		const_reference back() const
+		{
+			return (*_array + size() + 1);
+		}
 	// ***********operators********************
 		template <class value_type, class allocator_type>  
 		bool operator== (const vector<value_type,allocator_type>& rhs)

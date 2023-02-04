@@ -1,7 +1,9 @@
 #include<iostream>
 #include <memory>
+#include "vector_iterator.hpp"
 #include "vector.hpp"
 #include<vector>
+
 // class MyALLOC {
 
 // };
@@ -26,7 +28,8 @@ int main ()
   for (int i=1; i<=5; i++) myvector.push_back(i);
 
   std::cout << "myvector contains:";
-  for (ft::vector<int>::iterator_vector it = myvector.begin() ; it != myvector.end(); ++it)
+
+  for (ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
 	{
 		std::cout << ' ' << *it;
 		if(it + 1 == myvector.end())
