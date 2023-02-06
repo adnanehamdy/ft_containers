@@ -21,25 +21,34 @@
 //     // explicit B(const A& a) : x(a.x) { }
 // };
 
+
 int main ()
 {
+  std::vector<int> myvector (3,100);
+//   myvector.push_back(1);
+  std::vector<int>::iterator it;
 
-  ft::vector<int> myvector;
-  for (int i=1; i<=5; i++) myvector.push_back(i);
+  it = myvector.begin();
+  it = myvector.insert (it , 200);
+
+  myvector.insert (it,2,300);
+
+  it = myvector.begin();
+
+  std::vector<int> anothervector (2,400);
+  myvector.insert (it+2,anothervector.begin(),anothervector.end());
+
+  int myarray [] = { 501,502,503 };
+  myvector.insert (myvector.begin(), myarray, myarray+3);
 
   std::cout << "myvector contains:";
-
-  for (ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
-	{
-		std::cout << ' ' << *it;
-		if(it + 1 == myvector.end())
-			std::cout << ' ' << *it;
-	}
-
+  for (it=myvector.begin(); it<myvector.end(); it++)
+    std::cout << ' ' << *it;
   std::cout << '\n';
 
   return 0;
 }
+
 
 
 

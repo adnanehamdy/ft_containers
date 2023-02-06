@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 16:29:31 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/02/04 13:28:42 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/06 11:21:56 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ namespace ft {
 		explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc) , _size() , _capacity(), _array()
 		{}
 		explicit vector(size_type n, const T& value = T(),
-		const Allocator& = Allocator());
+		const Allocator& = Allocator())
+		{
+			for (int i = 0; i < n; i++)
+				push_back(value);
+		}
 		// template <class InputIterator>
 		// vector(InputIterator first, InputIterator last,
 		// const Allocator& = Allocator());
@@ -214,18 +218,94 @@ namespace ft {
 			_array = new_data;
 			_size = n;
 		}
-		// iterator insert(iterator position, const T& x);
-		// void insert(iterator position, size_type n, const T& x)
-		// {
-			
-		// }
+		iterator insert(iterator position, const value_type& x)
+		{
+			int p_index = position - begin();
+			value_type tmp;
+
+			if (position == this->end())
+			{
+				push_back(x);
+			}
+			else if (_size == _capacity)
+			{
+				value_type *new_data = _alloc.allocate(_size + 1);
+				_size += 1;
+				int i_2 = 0;
+				for (int i = 0; i_2 < _size + 1; i++)
+				{
+					if (p_index  == i_2)
+					{
+						_alloc.construct(new_data + i_2, x);
+						i--;
+					}
+					else 
+					_alloc.construct(new_data + i_2, std::move(_array[i]));
+					i_2++;
+				}
+				for (int i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_alloc.deallocate(_array, _capacity);
+				_array = new_data;
+				_capacity += 1;
+			}
+			else
+			{
+				value_type tmp_2;
+				tmp_2 = x;
+				_size += 1;
+				for (int i = p_index; i < _size; i++)
+				{
+					tmp = _array[i];
+					_array[i] = tmp_2;
+					tmp_2 = tmp;
+				}
+			}
+			return (begin() + p_index);
+		}
+		void insert(iterator position, size_type n, const T& x)
+		{
+			int p_index = position - begin();
+			for (int i = 0; i < n; i++)
+				insert(begin() + p_index, x);
+		}
 		// template <class InputIterator>
 		// void insert(iterator position,
 		// InputIterator first, InputIterator last);
-		// iterator erase(iterator position)
-		// {
-				
-		// }
+		iterator erase (iterator first, iterator last)
+		{
+			int p_index = first - begin();
+			if (last == end())
+			{
+				while (first < last)
+				{
+					last--;
+					pop_back();
+				}
+			}
+			else
+			{
+				// std::cout << "size = " << _size << std::endl;
+				value_type *new_data = _alloc.allocate(_size - (last - first));
+				for (int i = 0; i < _size - (last - first); i++)
+				{
+					if (p_index  == i)
+					{
+						p_index++;
+					}
+					else
+					_alloc.construct(new_data + i, std::move(_array[i]));
+					// std::cout << "i_2 = " << i_2 << std::endl;
+					// std::cout << "i = " << i << std::endl;
+				}
+				for (int i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_alloc.deallocate(_array, _capacity);
+				_size -= last - first;
+				_array = new_data;
+				_capacity += 1;
+			}
+		}
 		// iterator erase(iterator first, iterator last);
 		void swap(vector<value_type, allocator_type>& copy)
 		{

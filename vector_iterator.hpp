@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:46:44 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/02/04 13:27:13 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/05 18:31:15 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ namespace ft
 		public :
 		vector_iterator()
 		{}
-
 		vector_iterator(pointer copy)
 		{
 			current = copy;
@@ -39,7 +38,7 @@ namespace ft
 		{ this->current = copy.current; }
 		vector_iterator& operator=(const vector_iterator& copy)
 		{
-			copy._array = this->_array;
+			this->current = copy.current;
 			return (*this);
 		}
 	
