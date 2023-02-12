@@ -41,7 +41,7 @@ namespace ft {
 		explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc) , _size() , _capacity(), _array()
 		{}
 		explicit vector(size_type n, const T& value = T(),
-		const Allocator& = Allocator())
+		const allocator_type& alloc = allocator_type()) : _alloc(alloc) , _size() , _capacity(), _array()
 		{
 			for (int i = 0; i < n; i++)
 			push_back(value);
