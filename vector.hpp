@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: adnane <adnane@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 16:29:31 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/02/06 11:21:56 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/12 12:55:21y adnane           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include<memory>
-
+#include<iostream>
+#include "vector_iterator.hpp"
+ 
 namespace ft {
 	template <class T, class Allocator = std::allocator<T> >
 	class vector {
@@ -42,8 +44,8 @@ namespace ft {
 		const Allocator& = Allocator())
 		{
 			for (int i = 0; i < n; i++)
-				push_back(value);
-		}
+			push_back(value);
+	}
 		// template <class InputIterator>
 		// vector(InputIterator first, InputIterator last,
 		// const Allocator& = Allocator());
@@ -124,7 +126,9 @@ namespace ft {
 		const_reference operator[](size_type n) const
 		{ return (_array[n]); }
 		const_reference at(size_type n) const
-		{
+		
+
+{
 			if (n >= _size)
 				throw std::out_of_range("out of range");
 			return (this->operator[](n));
@@ -234,6 +238,7 @@ namespace ft {
 				int i_2 = 0;
 				for (int i = 0; i_2 < _size + 1; i++)
 				{
+          
 					if (p_index  == i_2)
 					{
 						_alloc.construct(new_data + i_2, x);
@@ -266,12 +271,122 @@ namespace ft {
 		void insert(iterator position, size_type n, const T& x)
 		{
 			int p_index = position - begin();
-			for (int i = 0; i < n; i++)
-				insert(begin() + p_index, x);
+			value_type tmp;
+
+			if (position == this->end())
+			{
+				for (int i = 0; i < n; i++)
+					push_back(x);
+			}
+			else if (_size + n > _capacity)
+			{
+				value_type *new_data = _alloc.allocate(_size + n);
+				// _size;
+				int i_2 = 0;
+				for (int i = 0; i_2 <= _size + n; i++)
+				{
+					if (p_index  == i_2)
+					{
+						for (int j = 0; j < n; j++)
+            {
+             _alloc.construct(new_data + i_2, x);
+                i_2++;
+            }
+            i_2--;
+            i--;
+					}
+					else 
+					_alloc.construct(new_data + i_2, std::move(_array[i]));
+					i_2++;
+				}
+				for (int i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_alloc.deallocate(_array, _capacity);
+				_array = new_data;
+				_size += n;
+				_capacity += n;
+			}
+			else
+			{
+       int i = 0;
+      i = (end() - 1) - begin();
+			   for (iterator it = end() + n - 1; it >= end(); it--)	
+        {
+            *it = *(_array + i);
+          i--;
+        }
+      for (iterator it = position; it < it + n; it++)
+      {
+          *it = x;
+			}
 		}
-		// template <class InputIterator>
-		// void insert(iterator position,
-		// InputIterator first, InputIterator last);
+  }
+  	template <class InputIterator>
+		void insert(iterator position,
+		InputIterator first, InputIterator last)	
+		{
+			size_t n = 0;
+			InputIterator tmp_first = first;
+			int p_index = position - begin();
+			while (tmp_first != last)
+			{
+				std::cout << "here\n";
+				n += 1;
+				tmp_first += 1;
+			}
+			value_type tmp;
+
+			if (position == this->end())
+			{
+				for (int i = 0; i < n; i++)
+					push_back(*first);
+					first++;
+			}
+			else if (_size + n > _capacity)
+			{
+				value_type *new_data = _alloc.allocate(_size + n);
+				// _size;
+				int i_2 = 0;
+				for (int i = 0; i_2 <= _size + n; i++)
+				{
+					if (p_index  == i_2)
+					{
+						for (int j = 0; j < n; j++)
+            {
+             _alloc.construct(new_data + i_2, *first);
+			 first++;
+                i_2++;
+            }
+            i_2--;
+            i--;
+					}
+					else 
+					_alloc.construct(new_data + i_2, std::move(_array[i]));
+					i_2++;
+				}
+				for (int i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_alloc.deallocate(_array, _capacity);
+				_array = new_data;
+				_size += n;
+				_capacity += n;
+			}
+			else
+			{
+       int i = 0;
+      i = (end() - 1) - begin();
+			   for (iterator it = end() + n - 1; it >= end(); it--)	
+        {
+            *it = *(_array + i);
+          i--;
+        }
+      for (iterator it = position; it < it + n; it++)
+      {
+          *it = *first;
+		  first++;
+			}
+  }
+		}
 		iterator erase (iterator first, iterator last)
 		{
 			int p_index = first - begin();
@@ -282,19 +397,24 @@ namespace ft {
 					last--;
 					pop_back();
 				}
+      return (end());
 			}
 			else
 			{
 				// std::cout << "size = " << _size << std::endl;
+        int i = 0;
 				value_type *new_data = _alloc.allocate(_size - (last - first));
-				for (int i = 0; i < _size - (last - first); i++)
+				for (int i_2 = 0; i_2 < _size - (last - first); i_2++)
 				{
 					if (p_index  == i)
 					{
-						p_index++;
+            i += last - first;
 					}
-					else
-					_alloc.construct(new_data + i, std::move(_array[i]));
+					// else
+     //      {
+          _alloc.construct(new_data + i_2, std::move(_array[i]));
+        // } 
+          i++;
 					// std::cout << "i_2 = " << i_2 << std::endl;
 					// std::cout << "i = " << i << std::endl;
 				}
@@ -303,8 +423,9 @@ namespace ft {
 				_alloc.deallocate(_array, _capacity);
 				_size -= last - first;
 				_array = new_data;
-				_capacity += 1;
+				_capacity = _size;
 			}
+    return (begin() + p_index);
 		}
 		// iterator erase(iterator first, iterator last);
 		void swap(vector<value_type, allocator_type>& copy)
@@ -317,8 +438,7 @@ namespace ft {
 			copy._capacity = _capacity;
 			copy._size = _size;
 			_array = tmp_array;
-			_capacity = tmp_capacity;
-			_size = tmp_size;
+			_capacity = tmp_capacity; _size = tmp_size;
 		}
 		void clear()
 		{

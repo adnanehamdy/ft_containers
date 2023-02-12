@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector_iterator.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: adnane <adnane@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:46:44 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/02/05 18:31:15 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/02/12 12:56:09 by adnane           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ namespace ft
 			this->current = copy.current;
 			return (*this);
 		}
-	
 		bool operator== ( 
 			const vector_iterator& second)
 		{

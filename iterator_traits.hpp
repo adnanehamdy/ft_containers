@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
+ 
 template<class Iterator> struct iterator_traits {
 	typedef typename Iterator::difference_type difference_type;
 	typedef typename Iterator::value_type value_type;
