@@ -53,8 +53,14 @@ namespace ft {
 		// ~vector();
 		// vector<T,Allocator>& operator=(const vector<T,Allocator>& x);
 		// template <class InputIterator>
-		// void assign(InputIterator first, InputIterator last);
-		// void assign(size_type n, const T& u);
+		// void assign(InputIterator first, InputIterator last)
+		// {
+
+		// }
+		// void assign(size_type n, const T& u)
+		// {
+		// 	printf("%d\n", )
+		// }
 		allocator_type get_allocator() const
 		{ return _alloc;}
 	// ******** ITERATORS ************
@@ -330,7 +336,6 @@ namespace ft {
 			int p_index = position - begin();
 			while (tmp_first != last)
 			{
-				std::cout << "here\n";
 				n += 1;
 				tmp_first += 1;
 			}
@@ -380,11 +385,11 @@ namespace ft {
             *it = *(_array + i);
           i--;
         }
-      for (iterator it = position; it < it + n; it++)
+      for (iterator it = position; it < position + n; it++)
       {
           *it = *first;
 		  first++;
-			}
+	}
   }
 		}
 		iterator erase (iterator first, iterator last)
