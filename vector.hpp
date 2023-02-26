@@ -13,7 +13,9 @@
 #include<memory>
 #include<iostream>
 #include "vector_iterator.hpp"
- 
+#include "enable_if.hpp"
+#include "is_integral.hpp"
+
 namespace ft {
 	template <class T, class Allocator = std::allocator<T> >
 	class vector {
@@ -46,21 +48,106 @@ namespace ft {
 			for (int i = 0; i < n; i++)
 			push_back(value);
 	}
-		// template <class InputIterator>
-		// vector(InputIterator first, InputIterator last,
-		// const Allocator& = Allocator());
+		template <class InputIterator>
+		vector(typename ft::enable_if<(!ft::is_integral<InputIterator>::value), InputIterator>::type first, InputIterator last,
+		const allocator_type& alloc  = allocator_type()) :  _alloc(alloc)  , _size() , _capacity() , _array()
+		{
+            size_t n = 0;
+            InputIterator tmp_first = first;
+            while (tmp_first != last)
+            {
+                n += 1;
+                tmp_first += 1;
+            }
+			resize(n);
+			for (int i = 0; i < n; i++)
+			{
+				_array[i] = *first;
+				first++;
+			}
+		}
 		vector(const vector<T,Allocator>& x);
 		// ~vector();
-		// vector<T,Allocator>& operator=(const vector<T,Allocator>& x);
-		// template <class InputIterator>
-		// void assign(InputIterator first, InputIterator last)
-		// {
-
-		// }
-		// void assign(size_type n, const T& u)
-		// {
-		// 	printf("%d\n", )
-		// }
+		vector<value_type ,allocator_type>& operator=(const vector<value_type> &x)
+		{
+			if (capacity() >= x.size())
+			{
+				value_type *new_type = _alloc.allocate(x._size);
+                for (int i = 0; i < x._size; i++)
+                {
+                    _alloc.construct(new_type  + i, x._array[i]);
+                }
+                for (int i = 0; i < size(); i++)
+                    _alloc.destroy(_array + i);
+                _alloc.deallocate(_array, _capacity);
+                _array = new_type;
+                _capacity = x._size;
+                _size = x._size;
+			}
+			else
+			{
+				for (int i = 0; i < x._size; i++)
+					_array[i] = x._array[i];
+				_size = x._size;
+			}
+			return (*this);
+		}
+		void assign(size_type n, const value_type& u)
+        {
+            if (n > _capacity)
+            {
+                value_type *new_type = _alloc.allocate(n);
+                for (int i = 0; i < n; i++)
+                {
+                    _alloc.construct(new_type  + i, u);
+                }
+                for (int i = 0; i < _size; i++)
+                    _alloc.destroy(_array + i);
+                _alloc.deallocate(_array, _capacity);
+                _array = new_type;
+                _capacity = n;
+                _size = n;
+            }    
+            else
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    _alloc.construct(_array + i, u);
+                }
+                _size = n;
+            }
+        }
+        template <class InputIterator>
+        void assign(typename ft::enable_if<(!ft::is_integral<InputIterator>::value), InputIterator>::type first, InputIterator last)
+        {
+            size_t n = 0;
+            InputIterator tmp_first = first;
+            while (tmp_first != last)
+            {
+                n += 1;
+                tmp_first += 1;
+            }
+            if (n > _capacity)
+            {
+                value_type *new_type = _alloc.allocate(n);
+                for (int i = 0; i < n; i++)
+                {
+                    _alloc.construct(new_type  + i, *first);
+                }
+                for (int i = 0; i < _size; i++)
+                    _alloc.destroy(_array + i);
+                _alloc.deallocate(_array, _capacity);
+                _array = new_type;
+                _capacity = n;
+                _size = n;
+            }    
+            else
+            {
+                for (int i = 0; i < n; i++)
+					_array + i  = *first;
+                _size = n;
+            }
+        }
 		allocator_type get_allocator() const
 		{ return _alloc;}
 	// ******** ITERATORS ************
@@ -329,7 +416,7 @@ namespace ft {
   }
   	template <class InputIterator>
 		void insert(iterator position,
-		InputIterator first, InputIterator last)	
+		typename ft::enable_if<!(ft::is_integral<InputIterator>::value), InputIterator>::type first, InputIterator last)	
 		{
 			size_t n = 0;
 			InputIterator tmp_first = first;
@@ -406,7 +493,6 @@ namespace ft {
 			}
 			else
 			{
-				// std::cout << "size = " << _size << std::endl;
         int i = 0;
 				value_type *new_data = _alloc.allocate(_size - (last - first));
 				for (int i_2 = 0; i_2 < _size - (last - first); i_2++)
@@ -415,13 +501,8 @@ namespace ft {
 					{
             i += last - first;
 					}
-					// else
-     //      {
           _alloc.construct(new_data + i_2, std::move(_array[i]));
-        // } 
           i++;
-					// std::cout << "i_2 = " << i_2 << std::endl;
-					// std::cout << "i = " << i << std::endl;
 				}
 				for (int i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
@@ -432,7 +513,10 @@ namespace ft {
 			}
     return (begin() + p_index);
 		}
-		// iterator erase(iterator first, iterator last);
+		iterator erase(iterator position)
+		{
+			return (erase(position, position + 1));
+		}
 		void swap(vector<value_type, allocator_type>& copy)
 		{
 			value_type *tmp_array = copy._array;
