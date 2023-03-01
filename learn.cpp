@@ -7,23 +7,18 @@
 #include <iostream>
 #include <vector>
 
+
 int main ()
 {
-  ft::vector<int> myvector;
+  ft::vector<int> foo (3,100);   // three ints with a value of 100
+  ft::vector<int> bar (2,200);   // two ints with a value of 200
 
-  // set some values (from 1 to 10)
-  for (int i=1; i<=10; i++) myvector.push_back(i);
-
-  // erase the 6th element
-  myvector.erase (myvector.begin()+5);
-
-  // erase the first 3 elements:
-  myvector.erase (myvector.begin(),myvector.begin()+3);
-
-  std::cout << "myvector contains:";
-  for (unsigned i=0; i<myvector.size(); ++i)
-    std::cout << ' ' << myvector[i];
-  std::cout << '\n';
+  if (foo==bar) std::cout << "foo and bar are equal\n";
+  if (foo!=bar) std::cout << "foo and bar are not equal\n";
+  if (foo< bar) std::cout << "foo is less than bar\n";
+  if (foo> bar) std::cout << "foo is greater than bar\n";
+  if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+  if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 
   return 0;
 }
