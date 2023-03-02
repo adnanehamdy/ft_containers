@@ -158,7 +158,19 @@ namespace ft {
 	// ******** ITERATORS ************
 		iterator begin()
 		{
+			// if (this->empty())
+			// 	return (NULL);
 			return (iterator(_array));
+		}
+		const_iterator begin() const
+		{
+			return (const_iterator(_array));
+		}
+		const_iterator end() const
+		{
+			if (this->empty())
+				return (begin());
+			return (const_iterator(_array + size()));
 		}
 		iterator end()
 		{
@@ -179,20 +191,32 @@ namespace ft {
 			{
 				if (_size == n)
 					return ;
-				value_type *new_type = _alloc.allocate(n);
-				for (int i = 0; i < n; i++)
+				else if (n > _size)
 				{
-					if (n >= _size)
-						_alloc.construct(new_type  + i, c);
-					else
-					_alloc.construct(new_type + i, std::move(_array[i]));
+					std::cout << "segfault\n" << n << std::endl;
+					while (_size < n)
+					{
+						push_back(c);
+					}
 				}
-				for (int i = 0; i < _size; i++)
-					_alloc.destroy(_array + i);
-				_alloc.deallocate(_array, _capacity);
-				_array = new_type;
-				_capacity = n;
-				_size = n;
+				else
+				{
+					value_type *new_type = _alloc.allocate(n);
+					for (int i = 0; i < n; i++)
+					{
+						if (n >= _size)
+							_alloc.construct(new_type  + i, c);
+						else
+						_alloc.construct(new_type + i, std::move(_array[i]));
+					}
+					for (int i = 0; i < _size; i++)
+						_alloc.destroy(_array + i);
+					_alloc.deallocate(_array, _capacity);
+					_array = new_type;
+					_size = n;
+				}
+				if (n > _capacity)
+					_capacity = n;
 			}
 			size_type capacity() const
 			{ return (_capacity);}
@@ -481,7 +505,6 @@ namespace ft {
 			value_type *tmp_array = copy._array;
 			size_type tmp_capacity = copy._capacity;
 			size_type tmp_size = copy._size;
-
 			copy._array = _array;
 			copy._capacity = _capacity;
 			copy._size = _size;
@@ -513,30 +536,29 @@ namespace ft {
 	template <class value_type, class allocator_type>  
 		bool operator== (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
 		{
-			return (equal(first.begin(), first.end(), second.begin(), second.end()));
+			return (!((first > second) || first < second));
 		}
-
-	template <class value_type, class allocator_type> 
-		bool operator!= (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
-		{ return (!equal(first.begin(), first.end(), second.begin(), second.end())); }
 		template <class value_type, class allocator_type> 
+		bool operator!= (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
+		{ return (!(first == second));}
+		template <class value_type, class allocator_type>
 		bool operator<  (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
-		{
+		{	
 			return ((lexicographical_compare(first.begin(), first.end(), second.begin(), second.end())));
 		}
 		template <class value_type, class allocator_type> 
 		bool operator> (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
-		{ 	
-			return (!(lexicographical_compare(first.begin(),first.end() , second.begin(), second.end())));
+		{
+			return ((lexicographical_compare(second.begin(), second.end(), first.begin(), first.end())));
 		}
 		template <class value_type, class allocator_type> 
 		bool operator<= (const vector<value_type, allocator_type>&first, const vector<value_type,allocator_type>& second)
-		{ 
-			return ((lexicographical_compare(first.begin(), second.end(), second.begin(), second.end()))  | (equal(first.begin() , second.end()))); 
+		{
+			return((first < second) || (first == second));
 		}
 		template <class value_type, class allocator_type>
 		bool operator>= (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
 		{
-			 return (!(lexicographical_compare(first.begin(), first.end() , second.begin(), second.end()))  | (equal(first.begin(), second.end())));
+			 return ((first > second) || (first == second));
 		}
 }

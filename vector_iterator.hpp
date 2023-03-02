@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:46:44 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/03/01 12:31:42 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/03/02 11:03:05 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,26 +62,26 @@ namespace ft
 		{
 			*current = t;
 		}
-		value_type& operator++(int)
+		vector_iterator operator++(int)
     	{
         	vector_iterator &tmp = *this;
 			++tmp.current;
-        	return *tmp;
+        	return tmp;
     	}
-		value_type& operator++ ()
+		vector_iterator operator++ ()
 		{
-			return (*(current++));
+			return ((current++));
 		}
-		value_type& operator--(int)
+		vector_iterator operator--(int)
     	{
         	vector_iterator &tmp = *this;
 			--tmp.current;
-        	return (*tmp);
+        	return (tmp);
     	}
-		value_type& operator-- ()
+		vector_iterator operator-- ()
 		{
 			current--;
-			return (*current);
+			return (current);
 		}
 		difference_type operator+ (const vector_iterator &n) const
 		{
@@ -115,11 +115,11 @@ namespace ft
 		{
 			return (current <= other.current);	
 		}
-		vector_iterator& operator+=(difference_type n) {
+		vector_iterator operator+=(difference_type n) {
           current += n;
           return *this;
         }
-		vector_iterator& operator-=(difference_type n)
+		vector_iterator operator-=(difference_type n)
 		{
 			current -= n;
 			return (*this);
@@ -131,14 +131,14 @@ namespace ft
 	};
 
 	template <typename T> 
-	class const_vector_iterator
+	class const_vector_iterator : ft::vector_iterator<T>
 	{
 		public :
-		typedef typename iterator_traits<const T>::difference_type difference_type;
-		typedef typename iterator_traits<const T>::value_type value_type;
-		typedef typename iterator_traits<const T>::pointer pointer;
-		typedef typename iterator_traits<const T>::reference reference;
-		typedef typename iterator_traits<const T>::iterator_category iterator_category;
+		typedef typename iterator_traits<T>::difference_type difference_type;
+		typedef typename iterator_traits<T>::value_type value_type;
+		typedef typename iterator_traits<T>::pointer pointer;
+		typedef typename iterator_traits<T>::reference reference;
+		typedef typename iterator_traits<T>::iterator_category iterator_category;
 		protected :
 		pointer current;
 		public :
@@ -168,7 +168,7 @@ namespace ft
 		{
 			return (*current);
 		}
-		pointer operator ->() const
+		const pointer operator ->() const
 		{
 			return (current);
 		}
@@ -176,28 +176,28 @@ namespace ft
 		{
 			*current = t;
 		}
-		value_type& operator++(int)
+		const_vector_iterator operator++(int)
     	{
         	const_vector_iterator &tmp = *this;
 			++tmp.current;
-        	return *tmp;
+        	return tmp;
     	}
-		value_type& operator++ ()
+		const_vector_iterator operator++ ()
 		{
-			return (*(current++));
+			return ((current++));
 		}
-		value_type& operator--(int)
+		const_vector_iterator operator--(int)
     	{
         	const_vector_iterator &tmp = *this;
 			--tmp.current;
-        	return (*tmp);
+        	return (tmp);
     	}
-		value_type& operator-- ()
+		const_vector_iterator  operator-- ()
 		{
 			current--;
-			return (*current);
+			return (current);
 		}
-		difference_type operator+ (const const_vector_iterator &n) const
+		const difference_type operator+ (const const_vector_iterator &n) const
 		{
 			return (current + n.current);
 		}
@@ -205,7 +205,7 @@ namespace ft
 		{
 			return (current + n);
 		}
-		difference_type operator- (const const_vector_iterator &n) const 
+		const difference_type operator- (const const_vector_iterator &n) const 
 		{
 			return (current - n.current);
 		}
