@@ -6,7 +6,7 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:46:44 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/03/02 11:03:05 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/03/03 18:59:19 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,6 @@ namespace ft
 			this->current = copy.current;
 			return (*this);
 		}
-		bool operator== ( 
-			const vector_iterator& second)
-		{
-			return (this->current == second.current);
-		}
-		bool operator != (const vector_iterator& second)
-		{
-			return (this->current != second.current);
-		}
 		reference operator *() const
 		{
 			return (*current);
@@ -83,37 +74,13 @@ namespace ft
 			current--;
 			return (current);
 		}
-		difference_type operator+ (const vector_iterator &n) const
-		{
-			return (current + n.current);
-		}
 		vector_iterator operator+ (difference_type n) const
 		{
 			return (current + n);
 		}
-		difference_type operator- (const vector_iterator &n) const 
-		{
-			return (current - n.current);
-		}
 		vector_iterator operator- (difference_type n) const 
 		{
 			return (current - n);
-		}
-		bool operator>(const vector_iterator& other) const
-		{
-			return (current > other.current);
-		}
-		bool operator<(const vector_iterator& other) const
-		{
-			return (current < other.current);
-		}
-		bool operator>=(const vector_iterator& other) const
-		{
-			return (current >= other.current);	
-		}
-		bool operator<=(const vector_iterator& other) const
-		{
-			return (current <= other.current);	
 		}
 		vector_iterator operator+=(difference_type n) {
           current += n;
@@ -128,8 +95,64 @@ namespace ft
 		{
 			return (*(current + n));
 		}
+		template <typename value>
+		friend bool operator != (const vector_iterator<value>& first, const vector_iterator<value>& second);
+		template <typename value>
+		friend typename vector_iterator<value>::difference_type operator- (const vector_iterator<value>& first, const vector_iterator<value> &n); //const;
+		template <typename value>
+		friend typename vector_iterator<value>::difference_type operator+ (const vector_iterator<value>& first, const vector_iterator<value> &n); //const;
+		template <typename value>
+		friend bool operator== (const vector_iterator<value>& first, const vector_iterator<value>& second);
+		template <typename value>
+		friend bool operator>(const vector_iterator<value>& first ,const vector_iterator<value>& other); //const;
+		template <typename value>
+		friend bool operator<(const vector_iterator<value>& first ,const vector_iterator<value>& other); //const;
+		template <typename value>
+		friend bool operator>=(const vector_iterator<value>& first ,const vector_iterator<value>& other); //const;
+		template <typename value>
+		friend bool operator<=(const vector_iterator<value>& first ,const vector_iterator<value>& other); //const;
 	};
-
+		template <typename value>
+		bool operator== (const vector_iterator<value>& first ,const vector_iterator<value>& second)
+		{
+			return (first.current == second.current);
+		}
+		template <typename value>	
+		bool operator != (const vector_iterator<value>& first ,const vector_iterator<value>& second)
+		{
+			return (first.current != second.current);
+		}
+		template <typename value>
+		typename vector_iterator<value>::difference_type operator+ (const vector_iterator<value>& first, const vector_iterator<value> &n) //const 
+		{
+			return (first.current - n.current);
+		}
+		template <typename value>
+		typename vector_iterator<value>::difference_type operator- (const vector_iterator<value>& first, const vector_iterator<value> &n) //const
+		{
+			return (first.current + n.current);
+		}
+		template <typename value>
+		bool operator>(const vector_iterator<value>& first ,const vector_iterator<value>& other) //const
+		{
+			return (first.current > other.current);
+		}
+		template <typename value>
+		bool operator<(const vector_iterator<value>& first, const vector_iterator<value>& other) //const
+		{
+			return (first.current < other.current);
+		}
+		template <typename value>
+		bool operator>=(const vector_iterator<value>& first, const vector_iterator<value>& other) //const
+		{
+			return (first.current >= other.current);	
+		}
+		template <typename value>
+		bool operator<=(const vector_iterator<value>& first, const vector_iterator<value>& other) //const
+		{
+			return (first.current <= other.current);	
+		}
+		
 	template <typename T> 
 	class const_vector_iterator : ft::vector_iterator<T>
 	{
@@ -154,15 +177,6 @@ namespace ft
 		{
 			this->current = copy.current;
 			return (*this);
-		}
-		bool operator== ( 
-			const_vector_iterator& second)
-		{
-			return (this->current == second.current);
-		}
-		bool operator != (const const_vector_iterator& second)
-		{
-			return (this->current != second.current);
 		}
 		const reference operator *() const
 		{
@@ -197,37 +211,13 @@ namespace ft
 			current--;
 			return (current);
 		}
-		const difference_type operator+ (const const_vector_iterator &n) const
-		{
-			return (current + n.current);
-		}
 		const_vector_iterator operator+ (difference_type n) const
 		{
 			return (current + n);
 		}
-		const difference_type operator- (const const_vector_iterator &n) const 
-		{
-			return (current - n.current);
-		}
 		const_vector_iterator operator- (difference_type n) const 
 		{
 			return (current - n);
-		}
-		bool operator>(const const_vector_iterator& other) const
-		{
-			return (current > other.current);
-		}
-		bool operator<(const const_vector_iterator& other) const
-		{
-			return (current < other.current);
-		}
-		bool operator>=(const const_vector_iterator& other) const
-		{
-			return (current >= other.current);	
-		}
-		bool operator<=(const const_vector_iterator& other) const
-		{
-			return (current <= other.current);	
 		}
 		const_vector_iterator& operator+=(difference_type n) {
           current += n;
@@ -242,5 +232,61 @@ namespace ft
 		{
 			return (*(current + n));
 		}
+		template <typename value>
+		friend bool operator != (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second);
+		template <typename value>
+		friend difference_type operator- (const const_vector_iterator<value>& first, const const_vector_iterator<value> &n); //const;
+		template <typename value>
+		friend difference_type operator+ (const const_vector_iterator<value>& first, const const_vector_iterator<value> &n); //const;
+		template <typename value>
+		friend bool operator == (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second);
+		template <typename value>
+		friend bool operator > (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second); //const;
+		template <typename value>
+		friend bool operator < (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second); //const;
+		template <typename value>
+		friend bool operator >= (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second); //const;
+		template <typename value>
+		friend bool operator <= (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second); //const;
 	};
+		template <typename value>
+		bool operator== (const const_vector_iterator<value>& first,  const const_vector_iterator<value>& second)
+		{
+			return (first.current == second.current);
+		}
+		template <typename value>
+		bool operator != (const const_vector_iterator<value>& first, const const_vector_iterator<value>& second)
+		{
+			return (first.current != second.current);
+		}
+		template <typename value>
+		typename const_vector_iterator<value>::difference_type operator- (const const_vector_iterator<value>& first, const const_vector_iterator<value> &n) //const 
+		{
+			return (first.current - n.current);
+		}
+		template <typename value>
+		typename const_vector_iterator<value>::difference_type operator+ (const const_vector_iterator<value>& first, const const_vector_iterator<value> &n) //const
+		{
+			return (first.current + n.current);
+		}
+		template <typename value>
+		bool operator>(const const_vector_iterator<value>& first ,const const_vector_iterator<value>& other)// const
+		{
+			return (first.current > other.current);
+		}
+		template <typename value>
+		bool operator<(const const_vector_iterator<value>& first, const const_vector_iterator<value>& other) //const
+		{
+			return (first.current < other.current);
+		}
+		template <typename value>
+		bool operator>=(const const_vector_iterator<value>& first, const const_vector_iterator<value>& other) //const
+		{
+			return (first.current >= other.current);	
+		}
+		template <typename value>
+		bool operator<=(const const_vector_iterator<value>& first, const const_vector_iterator<value>& other) //const
+		{
+			return (first.current <= other.current);	
+		}
 }

@@ -28,7 +28,7 @@ namespace ft {
 		typedef T value_type;
 		typedef typename ft::vector_iterator<T*> iterator;
 		typedef typename ft::const_vector_iterator<const T*> const_iterator;
-		typedef std::size_t  size_type;
+		typedef std::size_t size_type;
 		typedef  ptrdiff_t difference_type;
 		typedef Allocator allocator_type;
 		typedef typename Allocator::pointer pointer;
@@ -47,12 +47,21 @@ namespace ft {
 		explicit vector(size_type n, const T& value = T(),
 		const allocator_type& alloc = allocator_type()) : _size() , _capacity(), _array() , _alloc(alloc)
 		{
-			for (size_t i = 0; i < n; i++)
-			push_back(value);
+			value_type *new_type = _alloc.allocate(n);
+            for (size_t i = 0; i < n; i++)
+            {
+                _alloc.construct(new_type  + i, value);
+            }
+            for (size_t i = 0; i < _size; i++)
+                _alloc.destroy(_array + i);
+            _alloc.deallocate(_array, _capacity);
+            _array = new_type;
+            _capacity = n;
+            _size = n;
 	}
 		template <class InputIterator>
 		vector(typename ft::enable_if<(!ft::is_integral<InputIterator>::value), InputIterator>::type first, InputIterator last,
-		const allocator_type& alloc  = allocator_type()) :  _alloc(alloc)  , _size() , _capacity() , _array()
+		const allocator_type& alloc  = allocator_type()) : _size() , _capacity() , _array() , _alloc(alloc)
 		{
             size_t n = 0;
             InputIterator tmp_first = first;
@@ -61,28 +70,44 @@ namespace ft {
                 n += 1;
                 tmp_first += 1;
             }
-			resize(n);
-			for (size_t i = 0; i < n; i++)
-			{
-				_array[i] = *first;
+			value_type *new_type = _alloc.allocate(n);
+            for (size_t i = 0; i < n; i++)
+            {
+                _alloc.construct(new_type  + i, *first);
 				first++;
-			}
+            }
+            for (size_t i = 0; i < _size; i++)
+                _alloc.destroy(_array + i);
+            _alloc.deallocate(_array, _capacity);
+            _array = new_type;
+            _capacity = n;
+            _size = n;
+			// for (size_t i = 0; i < n; i++)
+			// {
+			// 	_array[i] = *first;
+			// 	first++;
+			// }
 		}
-		// vector(const vector<T,Allocator>& x)
-		// {
-			
-		// }
-		// ~vector();
+		vector(const vector<T,Allocator>& x) :  _size() , _capacity() , _array()
+		{
+			*this = x;
+		}
+		~vector()
+		{
+			 for (size_t i = 0; i < _size; i++)
+                _alloc.destroy(_array + i);
+            _alloc.deallocate(_array, _capacity);
+		}
 		vector<value_type ,allocator_type>& operator=(const vector<value_type> &x)
 		{
-			if (capacity() >= x.size())
+			if (_capacity < x.size())
 			{
 				value_type *new_type = _alloc.allocate(x._size);
-                for (int i = 0; i < x._size; i++)
+                for (size_t i = 0; i < x._size; i++)
                 {
                     _alloc.construct(new_type  + i, x._array[i]);
                 }
-                for (int i = 0; i < size(); i++)
+                for (size_t i = 0; i < size(); i++)
                     _alloc.destroy(_array + i);
                 _alloc.deallocate(_array, _capacity);
                 _array = new_type;
@@ -91,7 +116,7 @@ namespace ft {
 			}
 			else
 			{
-				for (int i = 0; i < x._size; i++)
+				for (size_t i = 0; i < x._size; i++)
 					_array[i] = x._array[i];
 				_size = x._size;
 			}
@@ -102,20 +127,20 @@ namespace ft {
             if (n > _capacity)
             {
                 value_type *new_type = _alloc.allocate(n);
-                for (int i = 0; i < n; i++)
+                for (size_t i = 0; i < n; i++)
                 {
                     _alloc.construct(new_type  + i, u);
                 }
-                for (int i = 0; i < _size; i++)
+                for (size_t i = 0; i < _size; i++)
                     _alloc.destroy(_array + i);
                 _alloc.deallocate(_array, _capacity);
                 _array = new_type;
                 _capacity = n;
                 _size = n;
-            }    
+            }   
             else
             {
-                for (int i = 0; i < n; i++)
+                for (size_t i = 0; i < n; i++)
                 {
                     _alloc.construct(_array + i, u);
                 }
@@ -149,7 +174,7 @@ namespace ft {
             else
             {
                 for (size_t i = 0; i < n; i++)
-					_array + i  = *first;
+					*(_array + i)  = *first;
                 _size = n;
             }
         }
@@ -191,25 +216,32 @@ namespace ft {
 			{
 				if (_size == n)
 					return ;
-				else if (n > _size)
+				else if (n > _size && n > _capacity)
 				{
-					std::cout << "segfault\n" << n << std::endl;
 					while (_size < n)
 					{
 						push_back(c);
 					}
 				}
+				else  if (n > _size)
+				{
+					while (n > _size)
+					{
+						_array[_size] = c;
+						_size++;
+					}
+				}
 				else
 				{
 					value_type *new_type = _alloc.allocate(n);
-					for (int i = 0; i < n; i++)
+					for (size_t i = 0; i < n; i++)
 					{
 						if (n >= _size)
 							_alloc.construct(new_type  + i, c);
 						else
 						_alloc.construct(new_type + i, std::move(_array[i]));
 					}
-					for (int i = 0; i < _size; i++)
+					for (size_t i = 0; i < _size; i++)
 						_alloc.destroy(_array + i);
 					_alloc.deallocate(_array, _capacity);
 					_array = new_type;
@@ -267,11 +299,11 @@ namespace ft {
 		}
 		reference back()
 		{
-			return (*_array + size() - 1);
+			return (*(_array + size() - 1));
 		}
 		const_reference back() const
 		{
-			return (*_array + size() + 1);
+			return (*(_array + size() + 1));
 		}	
 		
 	// ************ MODIFIERS ******************
@@ -288,15 +320,9 @@ namespace ft {
 		}
 		void pop_back()
 		{
-			size_type n = _size - 1;
-			value_type *new_data = _alloc.allocate(_capacity);
-			for (size_t i = 0; i < n; i++)
-				_alloc.construct(new_data + i, std::move(_array[i]));
-			for (size_t i = 0; i < _size; i++)
-				_alloc.destroy(_array + i);
-			_alloc.deallocate(_array, _capacity);
-			_array = new_data;
-			_size = n;
+			_alloc.destroy(_array + (_size - 1));
+			_size -= 1;
+
 		}
 		iterator insert(iterator position, const value_type& x)
 		{
@@ -321,7 +347,7 @@ namespace ft {
 						i--;
 					}
 					else 
-					_alloc.construct(new_data + i_2, std::move(_array[i]));
+					_alloc.construct(new_data + i_2, _array[i]);
 					i_2++;
 				}
 				for (int i = 0; i < _size; i++)
@@ -351,7 +377,7 @@ namespace ft {
 
 			if (position == this->end())
 			{
-				for (int i = 0; i < n; i++)
+				for (size_t i = 0; i < n; i++)
 					push_back(x);
 			}
 			else if (_size + n > _capacity)
