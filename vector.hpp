@@ -461,6 +461,9 @@ namespace ft {
 		iterator erase (iterator first, iterator last)
 		{
 			int p_index = first - begin();
+
+			for(int i = p_index; i < p_index + (last - first); i++)
+				_alloc.destroy(_array + i);
 			if (last == end())
 			{
 				while (first < last)
@@ -468,33 +471,26 @@ namespace ft {
 					last--;
 					pop_back();
 				}
-      return (end());
+     			 return (end());
 			}
 			else
 			{
-        int i = 0;
-				value_type *new_data = _alloc.allocate(_size - (last - first));
-				for (size_t i_2 = 0; i_2 < _size - (last - first); i_2++)
+				iterator tmp_first = first;
+				for (iterator it  = last; it != end(); it++)
 				{
-					if (p_index  == i)
-					{
-            i += last - first;
-					}
-          _alloc.construct(new_data + i_2, std::move(_array[i]));
-          i++;
+					*tmp_first = *it;
+					tmp_first++;
 				}
-				for (size_t i = 0; i < _size; i++)
-					_alloc.destroy(_array + i);
-				_alloc.deallocate(_array, _capacity);
 				_size -= last - first;
-				_array = new_data;
-				_capacity = _size;
+				return (begin() + p_index);
 			}
-    return (begin() + p_index);
 		}
 		iterator erase(iterator position)
 		{
-			return (erase(position, position + 1));
+			// if (position == end())
+			// 	erase(position, position);
+			// return (erase(position, position + 1));
+			if (position )	
 		}
 		void swap(vector<value_type, allocator_type>& copy)
 		{
@@ -505,7 +501,8 @@ namespace ft {
 			copy._capacity = _capacity;
 			copy._size = _size;
 			_array = tmp_array;
-			_capacity = tmp_capacity; _size = tmp_size;
+			_capacity = tmp_capacity;
+			_size = tmp_size;
 		}
 		void clear()
 		{
@@ -527,6 +524,8 @@ namespace ft {
 		friend bool operator< (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second);
 		template <class value_type, class allocator_type>
 		friend bool operator== (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second);
+		template <class value_type, class allocator_type>
+		friend void swap (vector<value_type ,allocator_type>& x, vector<value_type,allocator_type>& copy);
 };
 	// ******************* operators *************
 	template <class value_type, class allocator_type>  
@@ -556,5 +555,10 @@ namespace ft {
 		bool operator>= (const vector<value_type,allocator_type>& first, const vector<value_type,allocator_type>& second)
 		{
 			 return ((first > second) || (first == second));
+		}
+		template <class value_type, class allocator_type>  
+		void swap (vector<value_type ,allocator_type>& x, vector<value_type,allocator_type>& copy)
+		{
+			x.swap(copy);
 		}
 }
