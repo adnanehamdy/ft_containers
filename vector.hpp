@@ -17,6 +17,7 @@
 #include "is_integral.hpp"
 #include "lexicographical_compare.hpp"
 #include "equal.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft {
 	template <class T, class Allocator = std::allocator<T> >
@@ -33,8 +34,8 @@ namespace ft {
 		typedef Allocator allocator_type;
 		typedef typename Allocator::pointer pointer;
 		typedef typename Allocator::const_pointer const_pointer;
-		// typedef std::reverse_iterator<iterator> reverse_iterator;
-		// typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 	private :
 		size_type _size;
 		size_type _capacity;
@@ -82,11 +83,6 @@ namespace ft {
             _array = new_type;
             _capacity = n;
             _size = n;
-			// for (size_t i = 0; i < n; i++)
-			// {
-			// 	_array[i] = *first;
-			// 	first++;
-			// }
 		}
 		vector(const vector<T,Allocator>& x) :  _size() , _capacity() , _array()
 		{
@@ -183,8 +179,6 @@ namespace ft {
 	// ******** ITERATORS ************
 		iterator begin()
 		{
-			// if (this->empty())
-			// 	return (NULL);
 			return (iterator(_array));
 		}
 		const_iterator begin() const
@@ -203,10 +197,26 @@ namespace ft {
 				return (begin());
 			return (iterator(_array + size()));
 		}
-		// reverse_iterator rbegin();
-		// const_reverse_iterator rbegin() const;
-		// reverse_iterator rend();
-		// const_reverse_iterator rend() const;
+		reverse_iterator rbegin()
+		{
+			if (this->empty())
+				return (rend());
+			return (reverse_iterator(_array + _size - 1));
+		}
+		const_reverse_iterator rbegin() const
+		{
+			if (this->empty)
+				return (rend());
+			return (const_reverse_iterator(_array + _size - 1));
+		}
+		reverse_iterator rend()
+		{
+			return (reverse_iterator(_array));
+		}
+		const_reverse_iterator rend() const
+		{
+			return (const_reverse_iterator(_array));	
+		}
 	// ************ capacity *****************
 	 		size_type size() const
 			{ return (_size); }
@@ -327,65 +337,27 @@ namespace ft {
 		iterator insert(iterator position, const value_type& x)
 		{
 			int p_index = position - begin();
-			value_type tmp;
-
-			if (position == this->end())
-			{
-				push_back(x);
-			}
-			else if (_size == _capacity)
-			{
-				value_type *new_data = _alloc.allocate(_size + 1);
-				_size += 1;
-				int i_2 = 0;
-				for (int i = 0; i_2 < _size + 1; i++)
-				{
-          
-					if (p_index  == i_2)
-					{
-						_alloc.construct(new_data + i_2, x);
-						i--;
-					}
-					else 
-					_alloc.construct(new_data + i_2, _array[i]);
-					i_2++;
-				}
-				for (int i = 0; i < _size; i++)
-					_alloc.destroy(_array + i);
-				_alloc.deallocate(_array, _capacity);
-				_array = new_data;
-				_capacity += 1;
-			}
-			else
-			{
-				value_type tmp_2;
-				tmp_2 = x;
-				_size += 1;
-				for (int i = p_index; i < _size; i++)
-				{
-					tmp = _array[i];
-					_array[i] = tmp_2;
-					tmp_2 = tmp;
-				}
-			}
+			insert(position, 1, x);
 			return (begin() + p_index);
 		}
 		void insert(iterator position, size_type n, const T& x)
 		{
 			int p_index = position - begin();
 			value_type tmp;
+			int allocated_size  = 0;
 
-			if (position == this->end())
+			if (position < begin() || position > end())
+				*position;
+			else if (_size + n > _capacity || position == this->end())
 			{
-				for (size_t i = 0; i < n; i++)
-					push_back(x);
-			}
-			else if (_size + n > _capacity)
-			{
-				value_type *new_data = _alloc.allocate(_size + n);
-				// _size;
+				int allocated_size = 0;
+				if (_size + n > _size * 2)
+					allocated_size = _size + n;
+				else
+					allocated_size = _size * 2;
+				value_type *new_data = _alloc.allocate(allocated_size);
 				int i_2 = 0;
-				for (int i = 0; i_2 <= _size + n; i++)
+				for (int i = 0; i_2 < _size + n; i++)
 				{
 					if (p_index  == i_2)
 					{
@@ -397,30 +369,27 @@ namespace ft {
             i_2--;
             i--;
 					}
-					else 
-					_alloc.construct(new_data + i_2, std::move(_array[i]));
-					i_2++;
-				}
+			else
+				_alloc.construct(new_data + i_2, _array[i]);
+				i_2++;
+			}
 				for (int i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
 				_array = new_data;
 				_size += n;
-				_capacity += n;
+				_capacity = allocated_size;
 			}
 			else
 			{
-       int i = 0;
-      i = (end() - 1) - begin();
+       int i = _size - 1;
 			   for (iterator it = end() + n - 1; it >= end(); it--)	
         {
             *it = *(_array + i);
+			*position = x;
           i--;
         }
-      for (iterator it = position; it < it + n; it++)
-      {
-          *it = x;
-			}
+		_size += n;
 		}
   }
   	template <class InputIterator>
@@ -437,18 +406,18 @@ namespace ft {
 			}
 			value_type tmp;
 
-			if (position == this->end())
+			if (position < begin() || position > end())
+				*position;
+			else if (_size + n > _capacity || position == this->end())
 			{
-				for (size_t i = 0; i < n; i++)
-					push_back(*first);
-					first++;
-			}
-			else if (_size + n > _capacity)
-			{
-				value_type *new_data = _alloc.allocate(_size + n);
-				// _size;
+				int allocated_size = 0;
+				if (_size + n > _size * 2)
+					allocated_size = _size + n;
+				else
+					allocated_size = _size * 2;
+				value_type *new_data = _alloc.allocate(allocated_size);
 				int i_2 = 0;
-				for (int i = 0; i_2 <= _size + n; i++)
+				for (int i = 0; i_2 < _size + n; i++)
 				{
 					if (p_index  == i_2)
 					{
@@ -470,7 +439,7 @@ namespace ft {
 				_alloc.deallocate(_array, _capacity);
 				_array = new_data;
 				_size += n;
-				_capacity += n;
+				_capacity = allocated_size;
 			}
 			else
 			{
@@ -487,6 +456,7 @@ namespace ft {
 		  first++;
 	}
   }
+		/*	******* functions start ***********/
 		}
 		iterator erase (iterator first, iterator last)
 		{

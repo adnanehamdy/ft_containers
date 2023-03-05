@@ -6,12 +6,11 @@
 /*   By: ahamdy <ahamdy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 12:46:44 by ahamdy            #+#    #+#             */
-/*   Updated: 2023/03/03 18:59:19 by ahamdy           ###   ########.fr       */
+/*   Updated: 2023/03/04 09:56:51 by ahamdy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iterator>
-// #include "vector.hpp"
+
 #include "iterator_traits.hpp"
 
 namespace ft
@@ -56,37 +55,38 @@ namespace ft
 		vector_iterator operator++(int)
     	{
         	vector_iterator &tmp = *this;
-			++tmp.current;
+			++current;
         	return tmp;
     	}
-		vector_iterator operator++ ()
+		vector_iterator& operator++ ()
 		{
-			return ((current++));
+			current += 1;
+			return (*this);
 		}
 		vector_iterator operator--(int)
     	{
         	vector_iterator &tmp = *this;
-			--tmp.current;
+			--current;
         	return (tmp);
     	}
-		vector_iterator operator-- ()
+		vector_iterator& operator-- ()
 		{
-			current--;
-			return (current);
+			current -= 1;
+			return (*this);
 		}
 		vector_iterator operator+ (difference_type n) const
 		{
-			return (current + n);
+			return (vector_iterator(current + n));	
 		}
 		vector_iterator operator- (difference_type n) const 
 		{
-			return (current - n);
+			return (vector_iterator(current - n));
 		}
-		vector_iterator operator+=(difference_type n) {
+		vector_iterator& operator+=(difference_type n) {
           current += n;
           return *this;
         }
-		vector_iterator operator-=(difference_type n)
+		vector_iterator& operator-=(difference_type n)
 		{
 			current -= n;
 			return (*this);
@@ -130,7 +130,7 @@ namespace ft
 		template <typename value>
 		typename vector_iterator<value>::difference_type operator- (const vector_iterator<value>& first, const vector_iterator<value> &n) //const
 		{
-			return (first.current + n.current);
+			return (first.current - n.current);
 		}
 		template <typename value>
 		bool operator>(const vector_iterator<value>& first ,const vector_iterator<value>& other) //const
@@ -193,31 +193,32 @@ namespace ft
 		const_vector_iterator operator++(int)
     	{
         	const_vector_iterator &tmp = *this;
-			++tmp.current;
+			++current;
         	return tmp;
     	}
-		const_vector_iterator operator++ ()
+		const_vector_iterator& operator++ ()
 		{
-			return ((current++));
+			current += 1;
+			return (*this);
 		}
 		const_vector_iterator operator--(int)
     	{
         	const_vector_iterator &tmp = *this;
-			--tmp.current;
+			--current;
         	return (tmp);
     	}
-		const_vector_iterator  operator-- ()
+		const_vector_iterator&  operator-- ()
 		{
 			current--;
-			return (current);
+			return (*this);
 		}
 		const_vector_iterator operator+ (difference_type n) const
 		{
-			return (current + n);
+			return (const_vector_iterator(current + n));
 		}
 		const_vector_iterator operator- (difference_type n) const 
 		{
-			return (current - n);
+			return (const_vector_iterator(current - n));
 		}
 		const_vector_iterator& operator+=(difference_type n) {
           current += n;
