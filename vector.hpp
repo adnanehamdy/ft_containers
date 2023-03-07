@@ -148,19 +148,20 @@ namespace ft {
         {
             size_t n = 0;
             InputIterator tmp_first = first;
+			const value_type &u = *first;
             while (tmp_first != last)
             {
                 n += 1;
-                tmp_first += 1;
+                tmp_first = tmp_first + 1;
             }
             if (n > _capacity)
             {
                 value_type *new_type = _alloc.allocate(n);
                 for (size_t i = 0; i < n; i++)
                 {
-                    _alloc.construct(new_type  + i, *first);
-                }
-                for (int i = 0; i < _size; i++)
+					_alloc.construct(new_type  + i, u);
+				}
+                for (std::size_t i = 0; i < _size; i++)
                     _alloc.destroy(_array + i);
                 _alloc.deallocate(_array, _capacity);
                 _array = new_type;
@@ -224,41 +225,13 @@ namespace ft {
 			{ return _alloc.max_size();}
 			void resize(size_type n, value_type c = value_type())
 			{
-				if (_size == n)
-					return ;
-				else if (n > _size && n > _capacity)
-				{
-					while (_size < n)
-					{
-						push_back(c);
-					}
-				}
-				else  if (n > _size)
-				{
-					while (n > _size)
-					{
-						_array[_size] = c;
-						_size++;
-					}
-				}
-				else
-				{
-					value_type *new_type = _alloc.allocate(n);
-					for (size_t i = 0; i < n; i++)
-					{
-						if (n >= _size)
-							_alloc.construct(new_type  + i, c);
-						else
-						_alloc.construct(new_type + i, std::move(_array[i]));
-					}
-					for (size_t i = 0; i < _size; i++)
-						_alloc.destroy(_array + i);
-					_alloc.deallocate(_array, _capacity);
-					_array = new_type;
-					_size = n;
-				}
-				if (n > _capacity)
-					_capacity = n;
+       			 while (size() < n) {
+       			     push_back(c);
+       			 }
+
+       			 while (size() > n) {
+       			     pop_back();
+       			 }
 			}
 			size_type capacity() const
 			{ return (_capacity);}
@@ -342,9 +315,8 @@ namespace ft {
 		}
 		void insert(iterator position, size_type n, const T& x)
 		{
-			int p_index = position - begin();
-			value_type tmp;
-			int allocated_size  = 0;
+			size_t p_index = position - begin();
+			// value_type tmp;
 
 			if (position < begin() || position > end())
 				*position;
@@ -356,12 +328,12 @@ namespace ft {
 				else
 					allocated_size = _size * 2;
 				value_type *new_data = _alloc.allocate(allocated_size);
-				int i_2 = 0;
-				for (int i = 0; i_2 < _size + n; i++)
+				size_t i_2 = 0;
+				for (size_t i = 0; i_2 < _size + n; i++)
 				{
 					if (p_index  == i_2)
 					{
-						for (int j = 0; j < n; j++)
+						for (size_t j = 0; j < n; j++)
             {
              _alloc.construct(new_data + i_2, x);
                 i_2++;
@@ -373,7 +345,7 @@ namespace ft {
 				_alloc.construct(new_data + i_2, _array[i]);
 				i_2++;
 			}
-				for (int i = 0; i < _size; i++)
+				for (size_t i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
 				_array = new_data;
@@ -417,7 +389,7 @@ namespace ft {
 					allocated_size = _size * 2;
 				value_type *new_data = _alloc.allocate(allocated_size);
 				int i_2 = 0;
-				for (int i = 0; i_2 < _size + n; i++)
+				for (size_t i = 0; i_2 < _size + n; i++)
 				{
 					if (p_index  == i_2)
 					{
@@ -434,7 +406,7 @@ namespace ft {
 					_alloc.construct(new_data + i_2, std::move(_array[i]));
 					i_2++;
 				}
-				for (int i = 0; i < _size; i++)
+				for (size_t i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
 				_array = new_data;
@@ -462,8 +434,6 @@ namespace ft {
 		{
 			int p_index = first - begin();
 
-			for(int i = p_index; i < p_index + (last - first); i++)
-				_alloc.destroy(_array + i);
 			if (last == end())
 			{
 				while (first < last)
@@ -481,28 +451,34 @@ namespace ft {
 					*tmp_first = *it;
 					tmp_first++;
 				}
-				_size -= last - first;
+				int n = last - first;
+				while (n)
+				{
+					_alloc.destroy(_array + _size);
+					_size--;
+					n--;
+				}
 				return (begin() + p_index);
 			}
 		}
 		iterator erase(iterator position)
 		{
-			// if (position == end())
-			// 	erase(position, position);
-			// return (erase(position, position + 1));
-			if (position )	
+			int p_index = position - begin();
+			iterator tmp_first = position;
+			for (iterator it  = position + 1; it != end(); it++)
+			{
+				*tmp_first = *it;
+				tmp_first++;
+			}
+			_alloc.destroy(_array + _size);
+			_size--;
+			return (begin() + p_index);
 		}
 		void swap(vector<value_type, allocator_type>& copy)
 		{
-			value_type *tmp_array = copy._array;
-			size_type tmp_capacity = copy._capacity;
-			size_type tmp_size = copy._size;
-			copy._array = _array;
-			copy._capacity = _capacity;
-			copy._size = _size;
-			_array = tmp_array;
-			_capacity = tmp_capacity;
-			_size = tmp_size;
+			std::swap(this->_size, copy._size);
+			std::swap(this->_capacity, copy._capacity);
+			std::swap(this->_array, copy._array);
 		}
 		void clear()
 		{
